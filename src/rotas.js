@@ -17,7 +17,7 @@ rotas.get("/transacao", transacoesControladores.transacaoUsuario);
 rotas.get("/transacao/extrato", transacoesControladores.obterExtrato);
 rotas.get("/transacao/:id", transacoesIntermediarios.validarIdTransacao, transacoesControladores.transacaoId);
 
-rotas.post("/transacao", transacoesIntermediarios.validarTransacao, transacoesControladores.cadastrarTransacao);
+rotas.post("/transacao", transacoesIntermediarios.validarCamposTransacao, transacoesControladores.cadastrarTransacao);
 
 rotas.put("/usuario", usuariosIntermediarios.validarUsuario, usuariosControladores.atualizar);
 rotas.put("/transacao/:id", transacoesIntermediarios.validarTransacao, transacoesControladores.atualizar);
