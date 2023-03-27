@@ -1,12 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
 const joi = require("joi");
 
-const camposObrigatorios = require("../../metodos/camposObrigatorios");
 const mensagensErrors = require("../erros/mensagensErros");
-const { tipoTransacaoValida } = require("../../metodos/tipoTransacao");
 const { consultarTransacoes } = require("../../servicos/consultaTransacoes");
 const { campos } = require("./validarCampos");
-const mensagensErros = require("../erros/mensagensErros");
 
 const validarCamposTransacao = campos((schema) =>
   schema(
@@ -14,7 +11,10 @@ const validarCamposTransacao = campos((schema) =>
       descricao: joi
         .string()
         .required()
-        .messages({ "any.required": "O campo descrição é obrigatório" }),
+        .messages({
+          "string.base": "A descrição deve ser do tipo string",
+          "any.required": "O campo descrição é obrigatório",
+        }),
       valor: joi.number().positive().required().messages({
         "any.required": "O campo valor é obrigatório",
         "number.positive": "O valor precisa ser um número positivo",
@@ -40,26 +40,9 @@ const validarCamposTransacao = campos((schema) =>
     })
   )
 );
+
 const validarTransacao = async (req, res, next) => {
-  const { valor, categoria_id, tipo } = req.body;
-
-  if (temCampoNaoPreenchido) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ mensagem: temCampoNaoPreenchido });
-  }
-
-  if (valor <= 0) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json(mensagensErros.ValorInvalido);
-  }
-
-  if (!tipoTransacaoValida(tipo)) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json(mensagensErrors.tipoTransacaoErro);
-  }
+  const { categoria_id } = req.body;
 
   const { rows } = await consultarTransacoes({
     idCategoria: categoria_id,
